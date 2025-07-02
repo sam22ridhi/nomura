@@ -51,12 +51,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (token && window.location.pathname === '/auth/callback') {
         localStorage.setItem('waveai_token', token);
         await getCurrentUser();
-        // Redirect to appropriate dashboard
-        if (user?.role === 'volunteer') {
-          window.location.href = '/volunteer';
-        } else {
-          window.location.href = '/organizer';
-        }
+        // Redirect based on user role
+        window.history.replaceState({}, '', user?.role === 'volunteer' ? '/volunteer' : '/organizer');
       }
     };
 
@@ -125,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const loginWithGoogle = () => {
-    // Redirect to Google OAuth
+    // Redirect to Google OAuth - your backend will handle this
     window.location.href = `${API_URL}/auth/google`;
   };
 

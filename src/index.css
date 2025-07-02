@@ -1,7 +1,9 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Custom theme configuration for Tailwind v4 */
-@theme {
+/* Custom color variables */
+:root {
   --color-ocean-50: #f0fdfa;
   --color-ocean-100: #ccfbf1;
   --color-ocean-200: #99f6e4;
@@ -23,11 +25,6 @@
   --color-wave-700: #1d4ed8;
   --color-wave-800: #1e40af;
   --color-wave-900: #1e3a8a;
-
-  --animate-wave: wave 2s ease-in-out infinite;
-  --animate-float: float 6s ease-in-out infinite;
-  --animate-pulse-slow: pulse 3s ease-in-out infinite;
-  --animate-bounce-slow: bounce 2s infinite;
 }
 
 /* Custom keyframes */
@@ -41,19 +38,44 @@
   50% { transform: translateY(-10px); }
 }
 
-/* Additional utilities */
+/* Custom utilities */
 .animate-wave {
-  animation: var(--animate-wave);
+  animation: wave 2s ease-in-out infinite;
 }
 
 .animate-float {
-  animation: var(--animate-float);
+  animation: float 6s ease-in-out infinite;
 }
 
 .animate-pulse-slow {
-  animation: var(--animate-pulse-slow);
+  animation: pulse 3s ease-in-out infinite;
 }
 
 .animate-bounce-slow {
-  animation: var(--animate-bounce-slow);
+  animation: bounce 2s infinite;
 }
+
+/* Ocean color utilities */
+.bg-ocean-50 { background-color: var(--color-ocean-50); }
+.bg-ocean-100 { background-color: var(--color-ocean-100); }
+.bg-ocean-500 { background-color: var(--color-ocean-500); }
+.bg-ocean-600 { background-color: var(--color-ocean-600); }
+.text-ocean-500 { color: var(--color-ocean-500); }
+.text-ocean-600 { color: var(--color-ocean-600); }
+.border-ocean-200 { border-color: var(--color-ocean-200); }
+.border-ocean-500 { border-color: var(--color-ocean-500); }
+
+/* Wave color utilities */
+.bg-wave-50 { background-color: var(--color-wave-50); }
+.bg-wave-500 { background-color: var(--color-wave-500); }
+.bg-wave-600 { background-color: var(--color-wave-600); }
+.text-wave-400 { color: var(--color-wave-400); }
+.text-wave-600 { color: var(--color-wave-600); }
+
+/* Gradient utilities */
+.from-ocean-50 { --tw-gradient-from: var(--color-ocean-50); }
+.to-wave-50 { --tw-gradient-to: var(--color-wave-50); }
+.from-ocean-500 { --tw-gradient-from: var(--color-ocean-500); }
+.to-wave-500 { --tw-gradient-to: var(--color-wave-500); }
+.from-ocean-600 { --tw-gradient-from: var(--color-ocean-600); }
+.to-wave-600 { --tw-gradient-to: var(--color-wave-600); }
