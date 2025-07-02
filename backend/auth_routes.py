@@ -3,7 +3,7 @@ from fastapi.responses import RedirectResponse
 from datetime import datetime
 import uuid
 import logging
-
+from fastapi import Depends
 from models import User, get_user_by_email
 from oauth import get_google_user
 from auth_utils import create_auth_response, get_current_user, logout_user

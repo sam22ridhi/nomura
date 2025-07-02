@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from auth_routes import router as auth_router
+from fastapi import Depends
+from fastapi import Depends
 from config import CORS_ORIGINS
 import logging
 
