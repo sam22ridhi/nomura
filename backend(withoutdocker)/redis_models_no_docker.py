@@ -24,41 +24,64 @@ class RedisUser:
         self.id = kwargs.get('id', str(uuid.uuid4()))
         self.email = kwargs.get('email')
         self.name = kwargs.get('name')
-        self.avatar = kwargs.get('avatar')
+        self.avatar = kwargs.get('avatar', '')
         self.role = kwargs.get('role', 'volunteer')
         
         # Volunteer stats
-        self.points = kwargs.get('points', 0)
+        self.points = int(kwargs.get('points', 0))
         self.level = kwargs.get('level', 'Newcomer')
-        self.badges = kwargs.get('badges', 0)
+        self.badges = int(kwargs.get('badges', 0))
         
         # Organizer stats
-        self.organization_name = kwargs.get('organization_name')
-        self.events_organized = kwargs.get('events_organized', 0)
-        self.total_volunteers = kwargs.get('total_volunteers', 0)
-        self.is_verified = kwargs.get('is_verified', False)
+        self.organization_name = kwargs.get('organization_name', '')
+        self.events_organized = int(kwargs.get('events_organized', 0))
+        self.total_volunteers = int(kwargs.get('total_volunteers', 0))
+        self.is_verified = bool(kwargs.get('is_verified', False))
         
         # Meta
-        self.is_active = kwargs.get('is_active', True)
+        self.is_active = bool(kwargs.get('is_active', True))
         self.created_at = kwargs.get('created_at', datetime.utcnow().isoformat())
-        self.last_login = kwargs.get('last_login')
+        self.last_login = kwargs.get('last_login', '')
         
         # OAuth
         self.auth_provider = kwargs.get('auth_provider', 'local')
-        self.provider_id = kwargs.get('provider_id')
+        self.provider_id = kwargs.get('provider_id', '')
     
     def save(self):
         """Save user to Redis"""
         if not redis_client:
+            logger.error("Redis client not available")
             return False
         
         try:
-            user_data = self.to_dict()
+            user_data = {
+                'id': str(self.id),
+                'email': str(self.email or ''),
+                'name': str(self.name or ''),
+                'avatar': str(self.avatar or ''),
+                'role': str(self.role),
+                'points': str(self.points),
+                'level': str(self.level),
+                'badges': str(self.badges),
+                'organization_name': str(self.organization_name or ''),
+                'events_organized': str(self.events_organized),
+                'total_volunteers': str(self.total_volunteers),
+                'is_verified': str(self.is_verified),
+                'is_active': str(self.is_active),
+                'created_at': str(self.created_at),
+                'last_login': str(self.last_login or ''),
+                'auth_provider': str(self.auth_provider),
+                'provider_id': str(self.provider_id or '')
+            }
+            
+            # Save with both email and ID as keys
             redis_client.hset(f"user:{self.email}", mapping=user_data)
             redis_client.hset(f"user_by_id:{self.id}", mapping=user_data)
+            
+            logger.info(f"User saved successfully: {self.email}")
             return True
         except Exception as e:
-            logger.error(f"Error saving user: {e}")
+            logger.error(f"Error saving user {self.email}: {e}")
             return False
     
     def to_dict(self):
@@ -67,12 +90,12 @@ class RedisUser:
             'id': self.id,
             'email': self.email,
             'name': self.name,
-            'avatar': self.avatar or '',
+            'avatar': self.avatar,
             'role': self.role,
             'points': self.points,
             'level': self.level,
             'badges': self.badges,
-            'organizationName': self.organization_name or '',
+            'organizationName': self.organization_name,
             'eventsOrganized': self.events_organized,
             'totalVolunteers': self.total_volunteers,
             'isVerified': self.is_verified,
@@ -80,7 +103,7 @@ class RedisUser:
             'joinedAt': self.created_at,
             'lastLogin': self.last_login,
             'authProvider': self.auth_provider,
-            'providerId': self.provider_id or ''
+            'providerId': self.provider_id
         }
     
     @classmethod
@@ -92,10 +115,30 @@ class RedisUser:
         try:
             user_data = redis_client.hgetall(f"user:{email}")
             if user_data:
-                return cls(**user_data)
+                # Convert string values back to appropriate types
+                converted_data = {
+                    'id': user_data.get('id'),
+                    'email': user_data.get('email'),
+                    'name': user_data.get('name'),
+                    'avatar': user_data.get('avatar'),
+                    'role': user_data.get('role'),
+                    'points': int(user_data.get('points', 0)),
+                    'level': user_data.get('level'),
+                    'badges': int(user_data.get('badges', 0)),
+                    'organization_name': user_data.get('organization_name'),
+                    'events_organized': int(user_data.get('events_organized', 0)),
+                    'total_volunteers': int(user_data.get('total_volunteers', 0)),
+                    'is_verified': user_data.get('is_verified', 'False').lower() == 'true',
+                    'is_active': user_data.get('is_active', 'True').lower() == 'true',
+                    'created_at': user_data.get('created_at'),
+                    'last_login': user_data.get('last_login'),
+                    'auth_provider': user_data.get('auth_provider'),
+                    'provider_id': user_data.get('provider_id')
+                }
+                return cls(**converted_data)
             return None
         except Exception as e:
-            logger.error(f"Error finding user by email: {e}")
+            logger.error(f"Error finding user by email {email}: {e}")
             return None
     
     @classmethod
@@ -107,10 +150,30 @@ class RedisUser:
         try:
             user_data = redis_client.hgetall(f"user_by_id:{user_id}")
             if user_data:
-                return cls(**user_data)
+                # Convert string values back to appropriate types
+                converted_data = {
+                    'id': user_data.get('id'),
+                    'email': user_data.get('email'),
+                    'name': user_data.get('name'),
+                    'avatar': user_data.get('avatar'),
+                    'role': user_data.get('role'),
+                    'points': int(user_data.get('points', 0)),
+                    'level': user_data.get('level'),
+                    'badges': int(user_data.get('badges', 0)),
+                    'organization_name': user_data.get('organization_name'),
+                    'events_organized': int(user_data.get('events_organized', 0)),
+                    'total_volunteers': int(user_data.get('total_volunteers', 0)),
+                    'is_verified': user_data.get('is_verified', 'False').lower() == 'true',
+                    'is_active': user_data.get('is_active', 'True').lower() == 'true',
+                    'created_at': user_data.get('created_at'),
+                    'last_login': user_data.get('last_login'),
+                    'auth_provider': user_data.get('auth_provider'),
+                    'provider_id': user_data.get('provider_id')
+                }
+                return cls(**converted_data)
             return None
         except Exception as e:
-            logger.error(f"Error finding user by ID: {e}")
+            logger.error(f"Error finding user by ID {user_id}: {e}")
             return None
     
     @classmethod
@@ -124,9 +187,10 @@ class RedisUser:
             users = []
             for key in user_keys:
                 if not key.startswith("user_by_id:"):
-                    user_data = redis_client.hgetall(key)
-                    if user_data:
-                        users.append(cls(**user_data))
+                    email = key.replace("user:", "")
+                    user = cls.find_by_email(email)
+                    if user:
+                        users.append(user)
             return users
         except Exception as e:
             logger.error(f"Error getting all users: {e}")
@@ -140,10 +204,10 @@ class RedisSession:
         self.user_id = kwargs.get('user_id')
         self.token = kwargs.get('token')
         self.expires_at = kwargs.get('expires_at')
-        self.is_active = kwargs.get('is_active', True)
+        self.is_active = bool(kwargs.get('is_active', True))
         self.created_at = kwargs.get('created_at', datetime.utcnow().isoformat())
-        self.user_agent = kwargs.get('user_agent')
-        self.ip_address = kwargs.get('ip_address')
+        self.user_agent = kwargs.get('user_agent', '')
+        self.ip_address = kwargs.get('ip_address', '')
     
     def save(self):
         """Save session to Redis"""
@@ -152,14 +216,14 @@ class RedisSession:
         
         try:
             session_data = {
-                'id': self.id,
-                'user_id': self.user_id,
-                'token': self.token,
-                'expires_at': self.expires_at,
+                'id': str(self.id),
+                'user_id': str(self.user_id),
+                'token': str(self.token),
+                'expires_at': str(self.expires_at),
                 'is_active': str(self.is_active),
-                'created_at': self.created_at,
-                'user_agent': self.user_agent or '',
-                'ip_address': self.ip_address or ''
+                'created_at': str(self.created_at),
+                'user_agent': str(self.user_agent or ''),
+                'ip_address': str(self.ip_address or '')
             }
             
             redis_client.hset(f"session:{self.token}", mapping=session_data)
