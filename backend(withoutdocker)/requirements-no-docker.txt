@@ -1,0 +1,30 @@
+# FastAPI Core (stable versions)
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# Redis client (for local Redis)
+redis==5.0.1
+hiredis==2.2.3
+
+# Authentication
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# OAuth
+httpx==0.25.2
+
+# Environment variables
+python-dotenv==1.0.0
+
+# CORS
+python-cors-middleware==0.1.0
+
+# JSON handling
+pydantic==2.4.2
+
+# For session management
+uuid4==1.7.0
+
+# Optional: For better Redis models (if needed)
+# redis-om==0.2.1
