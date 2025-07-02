@@ -1,0 +1,22 @@
+# FastAPI Core
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# Redis for data storage and sessions
+# Redis for data storage and sessions
+redis==4.5.5
+redis-om==0.2.1
+
+# Authentication
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# OAuth
+httpx==0.25.2
+
+# Environment
+python-dotenv==1.0.0
+
+# CORS
+fastapi-cors==0.0.6
